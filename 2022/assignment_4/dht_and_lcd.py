@@ -9,7 +9,7 @@ dht_sensor_type = 0 # use 0 for the blue-colored sensor and 1 for the white-colo
 # set green as backlight color
 # we need to do it just once
 # setting the backlight color once reduces the amount of data transfer over the I2C line
-grove_rgb_lcd.setRGB(0,255,0)
+#grove_rgb_lcd.setRGB(0,255,0)
 
 while True:
     try:
@@ -20,7 +20,8 @@ while True:
         # check if we have nans
         # if so, then raise a type error exception
         if math.isnan(temp) is True or math.isnan(hum) is True:
-            raise TypeError('nan error')
+            print('Cannot get valid reading from sensor')
+            continue
 
         t = str(temp)
         h = str(hum)
@@ -33,7 +34,7 @@ while True:
         print(str(e))
         # and since we got a type error
         # then reset the LCD's text
-        grove_rgb_lcd.setText("")
+        grove_rgb_lcd.setText('trouble')
 
     except KeyboardInterrupt as e:
         print(str(e))
