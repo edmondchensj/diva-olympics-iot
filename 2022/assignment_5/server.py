@@ -4,30 +4,48 @@ Created on Mon Jul 25 15:35:21 2022
 
 @author: User1
 """
-
+try:
+	import grovepi
+except:
+	pass
+##1. IMPORT RELEVANT PARAMETERS
 from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn 
 from starlette.responses import HTMLResponse
+
+##TO DO: CUSTOMIZE YOUR WEB PAGE 
+LED = 4
+WEBSITE_TITLE = 'Your Basic IOT Controller App BY _____' # CHANGE TITLE HERE
+WELCOME_MESSAGE = 'Hello! Welcome to your very first created website , to start , you can ...' # CHANGE STRING
+
+
 class Light(BaseModel):
-	gpio : int
+	LED : int
 	is_on : bool = False
+	
 	def init(self):
-# 		GPIO.setup(self.gpio, GPIO.OUT)
-		print("init")
+		try:
+			grovepi.digitalWrite(LED,0)     # Send LOW to switch off LED
+		except: 
+			pass
+		print("initialized")
 		
 		return self
 	def on(self):
-# 	        GPIO.output(self.gpio, GPIO.HIGH)
+		grovepi.digitalWrite(LED,1)  
 		print("on")
 		self.is_on = True
 		
 	def off(self):
-# 	        GPIO.output(self.gpio, GPIO.LOW)
+		grovepi.digitalWrite(LED,0)  
 		print("off")	
 		self.is_on = False
 
-light = Light(gpio=15).init()
+
+
+
+
 
 light_app = FastAPI()
 @light_app.get("/", response_class=HTMLResponse)
@@ -56,10 +74,16 @@ def generate_html_response() -> HTMLResponse:
     html_content = f"""
     <html>
         <head>
-            <title>Your Basic IOT Controller App</title>
+            <title>{WEBSITE_TITLE}</title>
         </head>
         <body>
-            Lights are now turned : {state}
+		<hr class="solid">		
+			Welcome Message : {WELCOME_MESSAGE}		
+        <br>
+		<hr class="solid">		
+        <br>
+            System Message: Status of light is {state}
+        <br>
         <br>
 <button onclick="location.href='/lights/on'" type="button">ON
 </button>
@@ -70,5 +94,8 @@ def generate_html_response() -> HTMLResponse:
     """
     return HTMLResponse(content=html_content, status_code=200)
 	
+
+light = Light(LED=LED).init()
+
 if __name__ == "__main__":
  	run_server()
