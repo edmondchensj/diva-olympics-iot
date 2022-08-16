@@ -9,7 +9,7 @@ dht_sensor_type = 0 # use 0 for the blue-colored sensor and 1 for the white-colo
 # set green as backlight color
 # we need to do it just once
 # setting the backlight color once reduces the amount of data transfer over the I2C line
-#grove_rgb_lcd.setRGB(0,255,0)
+grove_rgb_lcd.setRGB(0,255,0)
 
 while True:
     try:
@@ -34,7 +34,7 @@ while True:
         print(str(e))
         # and since we got a type error
         # then reset the LCD's text
-        grove_rgb_lcd.setText('trouble')
+        grove_rgb_lcd.setText('OS Error')
 
     except KeyboardInterrupt as e:
         print(str(e))
