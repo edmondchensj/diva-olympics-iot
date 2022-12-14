@@ -71,27 +71,33 @@ def run_server():
 
 def generate_html_response() -> HTMLResponse:
     state = "ON" if light.is_on else "OFF"
-    html_content = f"""
-    <html>
-        <head>
-            <title>{WEBSITE_TITLE}</title>
-        </head>
-        <body>
-		<hr class="solid">		
-			Welcome Message : {WELCOME_MESSAGE}		
-        <br>
-		<hr class="solid">		
-        <br>
-            System Message: Status of light is {state}
-        <br>
-        <br>
-<button onclick="location.href='/lights/on'" type="button">ON
-</button>
-<button onclick="location.href='/lights/off'" type="button">OFF
-</button>
-        </body>
-    </html>
-    """
+    with open('index.html', 'r') as f:
+        html_content = f.read()
+
+    # html_content = f"""
+    # <html>
+    #     <head>
+    #         <title>{WEBSITE_TITLE}</title>
+    # 		<link rel='stylesheet' type='text/css' href="./bootstrap.min.css">
+    #     </head>
+    #     <body>
+	# 		<div class='container'>
+	# 			<hr class="solid">		
+	# 				Welcome Message : {WELCOME_MESSAGE}		
+	# 			<br>
+	# 			<hr class="solid">		
+	# 			<br>
+	# 				System Message: Status of light is {state}
+	# 			<br>
+	# 			<br>
+	# 			<button onclick="location.href='/lights/on'" type="button">ON
+	# 			</button>
+	# 			<button onclick="location.href='/lights/off'" type="button">OFF
+	# 			</button>
+	# 		</div>
+    #     </body>
+    # </html>
+    # """
     return HTMLResponse(content=html_content, status_code=200)
 	
 
