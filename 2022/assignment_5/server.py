@@ -9,7 +9,9 @@ try:
 except:
 	pass
 ##1. IMPORT RELEVANT PARAMETERS
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import uvicorn 
 from starlette.responses import HTMLResponse
@@ -21,87 +23,71 @@ WELCOME_MESSAGE = 'Hello! Welcome to your very first created website , to start 
 
 
 class Light(BaseModel):
-	LED : int
-	is_on : bool = False
-	
-	def init(self):
-		try:
-			grovepi.digitalWrite(LED,0)     # Send LOW to switch off LED
-		except: 
-			pass
-		print("initialized")
-		
-		return self
-	def on(self):
-		grovepi.digitalWrite(LED,1)  
-		print("on")
-		self.is_on = True
-		
-	def off(self):
-		grovepi.digitalWrite(LED,0)  
-		print("off")	
-		self.is_on = False
+    LED : int
+    is_on : bool = False
 
+    def init(self):
+        try:
+            grovepi.digitalWrite(LED,0)     # Send LOW to switch off LED
+        except: 
+            pass
+        print("initialized")
+        
+        return self
+    def on(self):
+        try: 
+            grovepi.digitalWrite(LED,1)  
+        except:
+            pass
+        print("on")
+        self.is_on = True
 
+    def off(self):
+        try: 
+            grovepi.digitalWrite(LED,0)  
+        except:
+            pass
 
-
-
-
-light_app = FastAPI()
-@light_app.get("/", response_class=HTMLResponse)
-async def root():
-    return generate_html_response()
-
-
-@light_app.get("/lights/on", response_class=HTMLResponse)
-def on_light():
-    light.on()
-    return generate_html_response()
-
-@light_app.get("/lights/off", response_class=HTMLResponse)
-def off_light():
-    light.off()
-    return generate_html_response()
-
-
-
-def run_server():
-	uvicorn.run(light_app, host="0.0.0.0", port=8080)
-	
-
-def generate_html_response() -> HTMLResponse:
-    state = "ON" if light.is_on else "OFF"
-    with open('index.html', 'r') as f:
-        html_content = f.read()
-
-    # html_content = f"""
-    # <html>
-    #     <head>
-    #         <title>{WEBSITE_TITLE}</title>
-    # 		<link rel='stylesheet' type='text/css' href="./bootstrap.min.css">
-    #     </head>
-    #     <body>
-	# 		<div class='container'>
-	# 			<hr class="solid">		
-	# 				Welcome Message : {WELCOME_MESSAGE}		
-	# 			<br>
-	# 			<hr class="solid">		
-	# 			<br>
-	# 				System Message: Status of light is {state}
-	# 			<br>
-	# 			<br>
-	# 			<button onclick="location.href='/lights/on'" type="button">ON
-	# 			</button>
-	# 			<button onclick="location.href='/lights/off'" type="button">OFF
-	# 			</button>
-	# 		</div>
-    #     </body>
-    # </html>
-    # """
-    return HTMLResponse(content=html_content, status_code=200)
-	
+        print("off")	
+        self.is_on = False
 
 light = Light(LED=LED).init()
+
+app = FastAPI()
+app.mount(
+    "/static",
+    StaticFiles(directory="static"),
+    name="static",
+)
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return generate_html_response(request)
+
+@app.get("/lights/on", response_class=HTMLResponse)
+def on_light(request: Request):
+    light.on()
+    return generate_html_response(request)
+
+@app.get("/lights/off", response_class=HTMLResponse)
+def off_light(request: Request):
+    light.off()
+    return generate_html_response(request)
+    
+def run_server():
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+
+def generate_html_response(request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        "index.html", {
+            "request": request,
+            "light": light,
+            "website_title": WEBSITE_TITLE,
+            "welcome_message": WELCOME_MESSAGE,
+            "status": "ON" if light.is_on else "OFF"
+            }
+    )
 
 if __name__ == "__main__":
  	run_server()

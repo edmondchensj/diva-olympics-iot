@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>{{ website_title }}</title>
+        <link rel='stylesheet' type='text/css' href="{{ url_for('static', path='/bootstrap.min.css') }}">
+    </head>
+    <body>
+        <div class='container text-center'>
+            <hr class="solid">	
+            <div class="my-5">
+                <div class="text-muted lead">
+                    Welcome Message
+                </div>
+                <h2>
+                    {{ welcome_message }}	
+                </h2>	
+            </div>	
+            <hr class="solid">
+            <div class="lead my-5">
+                Status of light is <b>{{ status }}</b>
+            </div>
+            <button class="btn btn-lg {{ 'btn-success' if status == 'ON' else 'btn-outline-secondary' }}" onclick="location.href='/lights/on'" type="button">ON
+            </button>
+            <button class="btn btn-lg {{ 'btn-danger' if status == 'OFF' else 'btn-outline-secondary' }}" onclick="location.href='/lights/off'" type="button">OFF
+            </button>
+        </div>
+    </body>
+</html>
