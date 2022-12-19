@@ -18,8 +18,8 @@ from starlette.responses import HTMLResponse
 
 ##TO DO: CUSTOMIZE YOUR WEB PAGE 
 LED = 4
-WEBSITE_TITLE = 'Your Basic IOT Controller App BY _____' # CHANGE TITLE HERE
-WELCOME_MESSAGE = 'Hello! Welcome to your very first created website , to start , you can ...' # CHANGE STRING
+WEBSITE_TITLE = 'Your Basic IOT App BY DIVA' # CHANGE TITLE HERE
+WELCOME_MESSAGE = 'Hello! Welcome to your very first created website, control the lights by clicking the buttons below!' # CHANGE STRING
 
 
 class Light(BaseModel):
